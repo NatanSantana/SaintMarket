@@ -1,0 +1,15 @@
+package dev.natan.CadastroUsuario.Repository;
+
+import dev.natan.CadastroUsuario.entity.Usuarios;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
+
+@Repository
+public interface UsuariosRepository extends JpaRepository<Usuarios, Long> {
+
+    Optional<Usuarios> findByCpf(String cpf);
+    UserDetails findByNome(String nome);
+}
