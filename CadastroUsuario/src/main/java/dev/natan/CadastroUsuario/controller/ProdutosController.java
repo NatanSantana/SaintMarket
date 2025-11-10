@@ -32,15 +32,15 @@ public class ProdutosController {
         return produtoService.salvarProduto(produtos);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Produtos> buscarProdutoPorId(@PathVariable Long id) {
+    @GetMapping("/produtoid")
+    public ResponseEntity<Produtos> buscarProdutoPorId(@RequestParam Long id) {
         return produtoService.buscarProdutoPorId(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping("/{id}")
-    public void deletarProduto(@PathVariable Long id) {
+    @DeleteMapping("/deletarProduto")
+    public void deletarProduto(@RequestParam Long id) {
         produtoService.deletarProduto(id);
     }
 

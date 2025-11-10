@@ -2,9 +2,11 @@ package dev.natan.CadastroUsuario.service;
 
 import dev.natan.CadastroUsuario.Repository.ComprasRepository;
 import dev.natan.CadastroUsuario.Repository.ProdutosRepository;
+import dev.natan.CadastroUsuario.Repository.PromocoesRepository;
 import dev.natan.CadastroUsuario.Repository.UsuariosRepository;
 import dev.natan.CadastroUsuario.entity.Compras;
 import dev.natan.CadastroUsuario.entity.Produtos;
+import dev.natan.CadastroUsuario.entity.Promocoes;
 import dev.natan.CadastroUsuario.entity.Usuarios;
 import dev.natan.CadastroUsuario.exceptions.GlobalExceptionHandler;
 import dev.natan.CadastroUsuario.exceptions.entradaIncorretaDeDadosException;
@@ -23,13 +25,15 @@ public class ComprasService {
     private final ProdutosRepository produtosRepository;
     private final ProdutoService produtoService;
     private final UsuariosRepository usuariosRepository;
+    private final PromocoesRepository promocoesRepository;
 
 
-    public ComprasService(ComprasRepository comprasRepository, ProdutosRepository produtosRepository, ProdutoService produtoService, UsuariosRepository usuariosRepository) {
+    public ComprasService(ComprasRepository comprasRepository, ProdutosRepository produtosRepository, ProdutoService produtoService, UsuariosRepository usuariosRepository, PromocoesRepository promocoesRepository) {
         this.comprasRepository = comprasRepository;
         this.produtosRepository = produtosRepository;
         this.produtoService = produtoService;
         this.usuariosRepository = usuariosRepository;
+        this.promocoesRepository = promocoesRepository;
     }
 
 
@@ -41,8 +45,10 @@ public class ComprasService {
         LocalDateTime data = LocalDateTime.now();
         DateTimeFormatter formatoBR = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
         Compras compras = new Compras();
+        BigDecimal total = null;
 
         Optional<Produtos> produtoResgatado = produtosRepository.findById(idProduto);
+        Promocoes promocoes = promocoesRepository.findByCategoria(produtoResgatado.get().getCategoria());
         Optional<Usuarios> seExiste = usuariosRepository.findByCpf(cpf);
 
 
@@ -63,9 +69,19 @@ public class ComprasService {
             throw new entradaIncorretaDeDadosException("O Estoque Atual é nulo, impossível realizar uma compra");
         } else {
 
-            String nomeProduto = produtoResgatado.get().getNomeProduto();
-            BigDecimal precoProduto = produtoResgatado.get().getPreco();
+            if (promocoes != null) {
+                BigDecimal precoProduto = produtoResgatado.get().getPreco();
+                BigDecimal multiplicarPorcentagem = precoProduto.multiply(promocoes.getPorcentagem());
+                total = precoProduto.subtract(multiplicarPorcentagem);
+            }
 
+
+            String nomeProduto = produtoResgatado.get().getNomeProduto();
+
+
+
+
+            BigDecimal precoProduto = produtoResgatado.get().getPreco();
 
             int estoqueAtualizado = estoqueAtual - qtdeProdutos;
             Optional<Produtos> produtosS = produtoService.buscarProdutoPorId(idProduto);
@@ -73,12 +89,13 @@ public class ComprasService {
             produtosS.get().setEstoque(estoqueAtualizado);
 
 
-
             compras.setProduto(nomeProduto);
-            compras.setPreco(precoProduto);
+            compras.setPreco(promocoes != null ? total : precoProduto);
             compras.setDataHora(String.valueOf(data.format(formatoBR)));
+            compras.setQtde_produto(qtdeProdutos);
             compras.setCpf(cpf != null ? cpf : "n/a");
-        }
+
+            }
 
         return comprasRepository.save(compras);
     }

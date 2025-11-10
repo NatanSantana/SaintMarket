@@ -16,17 +16,34 @@ public class Usuarios implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id_usuario;
 
 
     private String nome;
     private int idade;
+
+    @Column(unique = true)
     private String email;
+
     private String senha;
+
+    @Column(unique = true)
     private String cpf;
+
     private UserRole role;
 
+    public Usuarios(){
 
+    }
+
+    public Usuarios(String nome, int idade, String email, String senha, String cpf, UserRole role) {
+        this.nome = nome;
+        this.idade = idade;
+        this.email = email;
+        this.senha = senha;
+        this.cpf = cpf;
+        this.role = role;
+    }
 
     public String getCpf() {
         return cpf;
@@ -37,11 +54,11 @@ public class Usuarios implements UserDetails {
     }
 
     public Long getId() {
-        return id;
+        return id_usuario;
     }
 
     public void setId(Long id) {
-        this.id = id;
+        this.id_usuario = id;
     }
 
     public String getNome() {

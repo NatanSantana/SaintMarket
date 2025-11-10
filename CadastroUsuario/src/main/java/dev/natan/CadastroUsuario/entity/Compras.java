@@ -10,13 +10,22 @@ public class Compras {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id_compras;
 
     private String produto;
     private BigDecimal preco;
     private String dataHora;
     private String cpf;
+    private int qtde_produto;
 
+
+    public int getQtde_produto() {
+        return qtde_produto;
+    }
+
+    public void setQtde_produto(int qtde_produto) {
+        this.qtde_produto = qtde_produto;
+    }
 
     public String getCpf() {
         return cpf;
@@ -26,12 +35,12 @@ public class Compras {
         this.cpf = cpf;
     }
 
-    public Long getId() {
-        return id;
+    public Long getId_compras() {
+        return id_compras;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setId_compras(Long id_compras) {
+        this.id_compras = id_compras;
     }
 
     public String getProduto() {

@@ -33,14 +33,14 @@ public class ComprasController {
         return comprasService.registrarCompra(idProduto, qtdeProdutos, cpf);
     }
 
-    @GetMapping("/ComprasFeitas/{cpf}")
-    public List<Compras> listarComprasByCpf(@PathVariable String cpf) {
+    @GetMapping("/ComprasFeitas/por")
+    public List<Compras> listarComprasByCpf(@RequestParam String cpf) {
        return comprasService.listarComprasFeitasPorCpf(cpf);
     }
 
 
-    @DeleteMapping("/{id}")
-    public void deletarCompraFeita(@PathVariable Long id) {
+    @DeleteMapping("/cancelar-compra")
+    public void deletarCompraFeita(@RequestParam Long id) {
 
         comprasService.cancelarCompraFeita(id);
     }
