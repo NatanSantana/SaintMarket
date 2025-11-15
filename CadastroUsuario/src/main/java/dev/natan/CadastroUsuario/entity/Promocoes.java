@@ -25,6 +25,13 @@ public class Promocoes {
         return LocalDateTime.now().isAfter(expireDate);
     }
 
+    public Long getId_promocao() {
+        return id_promocao;
+    }
+
+    public void setId_promocao(Long id_promocao) {
+        this.id_promocao = id_promocao;
+    }
 
     public String getCategoria() {
         return categoria;

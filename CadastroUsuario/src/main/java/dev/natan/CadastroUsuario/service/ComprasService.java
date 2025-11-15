@@ -26,14 +26,18 @@ public class ComprasService {
     private final ProdutoService produtoService;
     private final UsuariosRepository usuariosRepository;
     private final PromocoesRepository promocoesRepository;
+    private final ResgatarPromocaoService resgatarPromocaoService;
 
 
-    public ComprasService(ComprasRepository comprasRepository, ProdutosRepository produtosRepository, ProdutoService produtoService, UsuariosRepository usuariosRepository, PromocoesRepository promocoesRepository) {
+
+    public ComprasService(ComprasRepository comprasRepository, ProdutosRepository produtosRepository, ProdutoService produtoService, UsuariosRepository usuariosRepository, PromocoesRepository promocoesRepository, ResgatarPromocaoService resgatarPromocaoService) {
         this.comprasRepository = comprasRepository;
         this.produtosRepository = produtosRepository;
         this.produtoService = produtoService;
         this.usuariosRepository = usuariosRepository;
         this.promocoesRepository = promocoesRepository;
+        this.resgatarPromocaoService = resgatarPromocaoService;
+
     }
 
 
@@ -45,13 +49,8 @@ public class ComprasService {
         LocalDateTime data = LocalDateTime.now();
         DateTimeFormatter formatoBR = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
         Compras compras = new Compras();
-        BigDecimal total = null;
 
         Optional<Produtos> produtoResgatado = produtosRepository.findById(idProduto);
-        Promocoes promocoes = promocoesRepository.findByCategoria(produtoResgatado.get().getCategoria());
-        Optional<Usuarios> seExiste = usuariosRepository.findByCpf(cpf);
-
-
 
         if (produtoResgatado.isEmpty()) {
             throw new IllegalArgumentException("Produto com ID: " + idProduto + " NÃO EXISTE!");
@@ -69,16 +68,8 @@ public class ComprasService {
             throw new entradaIncorretaDeDadosException("O Estoque Atual é nulo, impossível realizar uma compra");
         } else {
 
-            if (promocoes != null) {
-                BigDecimal precoProduto = produtoResgatado.get().getPreco();
-                BigDecimal multiplicarPorcentagem = precoProduto.multiply(promocoes.getPorcentagem());
-                total = precoProduto.subtract(multiplicarPorcentagem);
-            }
-
 
             String nomeProduto = produtoResgatado.get().getNomeProduto();
-
-
 
 
             BigDecimal precoProduto = produtoResgatado.get().getPreco();
@@ -90,7 +81,7 @@ public class ComprasService {
 
 
             compras.setProduto(nomeProduto);
-            compras.setPreco(promocoes != null ? total : precoProduto);
+            compras.setPreco(resgatarPromocaoService.verificarPromocao(idProduto, produtoResgatado.get().getCategoria()));
             compras.setDataHora(String.valueOf(data.format(formatoBR)));
             compras.setQtde_produto(qtdeProdutos);
             compras.setCpf(cpf != null ? cpf : "n/a");

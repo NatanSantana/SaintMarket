@@ -18,6 +18,13 @@ public class Produtos {
     private int estoque;
     private String categoria;
 
+    public Long getId_produto() {
+        return id_produto;
+    }
+
+    public void setId_produto(Long id_produto) {
+        this.id_produto = id_produto;
+    }
 
     public String getCategoria() {
         return categoria;
