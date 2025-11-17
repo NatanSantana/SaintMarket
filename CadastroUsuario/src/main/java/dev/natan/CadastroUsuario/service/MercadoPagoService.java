@@ -11,6 +11,7 @@ import dev.natan.CadastroUsuario.entity.ItensDTO;
 import dev.natan.CadastroUsuario.entity.Produtos;
 import dev.natan.CadastroUsuario.entity.Usuarios;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -20,6 +21,9 @@ import java.util.Optional;
 
 @Service
 public class MercadoPagoService {
+
+    @Value("${mercadopago.access.token}")
+    private String token;
 
     @Autowired
     private UsuariosRepository usuariosRepository;
@@ -32,9 +36,8 @@ public class MercadoPagoService {
 
 
     public MercadoPagoService() {
-        MercadoPagoConfig.setAccessToken(
-                "APP_USR-8500023697651304-111217-41e6776e7056159acb4f95fa04d1391c-2986355436"
-        );
+
+        MercadoPagoConfig.setAccessToken(token);
     }
 
     public Preference criarCheckoutPro(List<ItensDTO> itensCompra, Long idUser)
